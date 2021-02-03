@@ -17,15 +17,9 @@ public class Main {
     private static ArrayList<Process> processList = new ArrayList<>();
 
     public static void main(String[] args) {
-        /*testing processReader
-        Tester test = new Tester();
-        ArrayList<Process> processes = new ArrayList<>(processReader("test.txt"));
-        test.testProcessReader(processes);*/
 
         JFrame dummyFrame = new JFrame();
         startMenu(dummyFrame);
-
-        //idk, testing github
 
     }
 
