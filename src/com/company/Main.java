@@ -25,6 +25,8 @@ public class Main {
         JFrame dummyFrame = new JFrame();
         startMenu(dummyFrame);
 
+        //idk, testing github
+
     }
 
     /**
