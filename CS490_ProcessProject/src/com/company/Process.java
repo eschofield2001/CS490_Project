@@ -71,4 +71,12 @@ public class Process {
     public void print() {
         System.out.printf("Arrival Time: %d \nProcessID: %s \nService Time: %d \nPriority: %d \n\n", arrivalT, processID, serviceT, priority);
     }
+
+    public String getProcessID(){
+        return processID;
+    }
+
+    public int getServiceTime(){
+        return serviceT;
+    }
 }

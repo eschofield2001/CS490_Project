@@ -1,6 +1,9 @@
 package com.company;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,8 +21,70 @@ public class Main {
 
     public static void main(String[] args) {
 
-        JFrame dummyFrame = new JFrame();
-        startMenu(dummyFrame);
+        /*
+        Create main GUI of the project -------------------------------------------------------------------------------------
+         */
+        JFrame mainFrame = new JFrame("Process Simulation", null);
+        Dimension d = new Dimension();
+        d.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        mainFrame.setSize(d);
+        mainFrame.setLayout(new BorderLayout());
+
+        //Create table that displays the current loaded processes
+        JPanel tableDisplay = new JPanel(new BorderLayout());
+        Object columns[] = {"Process Name", "Service Time"};
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(columns);
+        JTable processTable = new JTable(model);
+        JScrollPane jsp = new JScrollPane(processTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        JLabel tableTitle = new JLabel("Waiting Process Queue");
+
+        tableDisplay.add(jsp, BorderLayout.CENTER);
+        tableDisplay.add(tableTitle, BorderLayout.NORTH);
+
+        //Create top section of GUI that allows user to start or pause the CPU
+        JLabel cpuState = new JLabel("System Uninitialized");
+
+        JButton startButton = new JButton("Start System");
+        startButton.addActionListener(e -> {
+            //Need to press start button to initialize process table
+            if(cpuState.getText().equals("System Uninitialized")){
+                Object[] row;
+                //Initialize table
+                for(int i = 0; i < processList.size(); i++){
+                    row = new Object[2];
+                    row[0] = processList.get(i).getProcessID();
+                    row[1] = processList.get(i).getServiceTime();
+                    model.addRow(row);
+                }
+            }
+            cpuState.setText("System Running");
+            //enable CPU
+        });
+
+        JButton pauseButton = new JButton("Pause System");
+        pauseButton.addActionListener(e -> {
+            cpuState.setText("System Paused");
+            //disable CPU
+        });
+
+        JPanel topSection = new JPanel(new FlowLayout());
+        topSection.add(startButton);
+        topSection.add(pauseButton);
+        topSection.add(cpuState);
+
+        //Add sections to GUI and initialize
+        mainFrame.add(topSection, BorderLayout.NORTH);
+        mainFrame.add(tableDisplay, BorderLayout.WEST);
+
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(false);
+
+        //Display start menu. When that is exited, the main GUI will be set to visible
+        startMenu(mainFrame);
 
     }
 
@@ -45,7 +110,7 @@ public class Main {
             start.dispose();
         });
 
-        JLabel instructions = new JLabel("Enter the name of the file containing the processes.");
+        JLabel instructions = new JLabel("Enter the directory of the file containing the processes.");
         JPanel flowLayout = new JPanel();
         flowLayout.add(inputText);
         flowLayout.add(enterButton);
