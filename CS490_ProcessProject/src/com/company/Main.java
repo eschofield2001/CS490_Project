@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.Flow;
 
 /**
  * Main controller of the project. Displays the GUI and controls the flow of execution of the processes
@@ -42,6 +43,57 @@ public class Main {
 
         tableDisplay.add(jsp, BorderLayout.CENTER);
         tableDisplay.add(tableTitle, BorderLayout.NORTH);
+
+        //Create CPU Display - First half is creating time input field
+        JPanel cpuDisplay = new JPanel(new BorderLayout());
+        JPanel timeDisplay = new JPanel(new FlowLayout());
+        JLabel timeFirstHalf = new JLabel("1 time unit = ");
+        JLabel timeSecondHalf = new JLabel ("ms.");
+        final int FIELD_WIDTH = 10;
+        JTextField timeText = new JTextField(FIELD_WIDTH);
+        timeText.setText("Time");
+
+        JButton enterButton = new JButton("Enter");
+        enterButton.addActionListener(e -> {
+            //Take info from timeText and use to update whatever needs to be updated
+        });
+
+        timeDisplay.add(timeFirstHalf);
+        timeDisplay.add(timeText);
+        timeDisplay.add(timeSecondHalf);
+        timeDisplay.add(enterButton);
+        cpuDisplay.add(timeDisplay, BorderLayout.NORTH);
+
+        //Create CPU Display - Second half is creating the actual representation of the CPU
+        //Could create master JPanel and do the following for multiple cpus that could be added to that panel
+        //Might be better to make this a separate class entirely...
+        Dimension cpuD = new Dimension(50,50);
+        JPanel cpu1 = new JPanel(new GridLayout(3,1));
+        cpu1.setPreferredSize(cpuD);
+        Border lineBorder = BorderFactory.createLineBorder(Color.black);
+        cpu1.setBorder(lineBorder);
+
+        JLabel cpuName_1 = new JLabel("CPU 1");
+        cpu1.add(cpuName_1);
+
+        JPanel cpuExec_1 = new JPanel(new FlowLayout());
+        JLabel execText = new JLabel("Executing: ");
+        JLabel pExec_1 = new JLabel("Idle");
+        cpuExec_1.add(execText);
+        cpuExec_1.add(pExec_1);
+        cpu1.add(cpuExec_1);
+
+        JPanel timeRemPanel_1 = new JPanel(new FlowLayout());
+        JLabel timeRemText = new JLabel("Time Remaining: ");
+        JLabel timeRem_1 = new JLabel("N/A");
+        timeRemPanel_1.add(timeRemText);
+        timeRemPanel_1.add(timeRem_1);
+        cpu1.add(timeRemPanel_1);
+
+
+        cpu1.setSize(cpu1.getPreferredSize());
+        cpuDisplay.add(cpu1, BorderLayout.CENTER);
+
 
         //Create top section of GUI that allows user to start or pause the CPU
         JLabel cpuState = new JLabel("System Uninitialized");
@@ -77,6 +129,7 @@ public class Main {
         //Add sections to GUI and initialize
         mainFrame.add(topSection, BorderLayout.NORTH);
         mainFrame.add(tableDisplay, BorderLayout.WEST);
+        mainFrame.add(cpuDisplay, BorderLayout.EAST);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.pack();
