@@ -33,4 +33,12 @@ public class CPUPanel extends JPanel {
         timeRemPanel.add(timeRem);
         add(timeRemPanel);
     }
+
+    public void setProcess(String process){
+        pExec.setText(process);
+    }
+
+    public void setTimeRem(int time){
+        timeRem.setText(String.valueOf(time));
+    }
 }

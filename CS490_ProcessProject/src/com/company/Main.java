@@ -1,15 +1,13 @@
 package com.company;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.Flow;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Main controller of the project. Displays the GUI and controls the flow of execution of the processes
@@ -18,7 +16,10 @@ public class Main {
 
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 1000;
-    private static ArrayList<Process> processList = new ArrayList<>();
+    public static ArrayList<Process> processList = new ArrayList<>();
+    public static String currentProcess = "";
+    public static Integer serviceTime = 0;
+    public static boolean isPaused = true;
 
     public static void main(String[] args) {
 
@@ -68,31 +69,39 @@ public class Main {
         CPUPanel cpu1 = new CPUPanel("CPU 1");
         cpuDisplay.add(cpu1, BorderLayout.CENTER);
 
+        Executor CPU1 = new Executor(cpu1);
+        Thread execThread = new Thread(CPU1);
 
         //Create top section of GUI that allows user to start or pause the CPU
         JLabel cpuState = new JLabel("System Uninitialized");
 
         JButton startButton = new JButton("Start System");
         startButton.addActionListener(e -> {
+            isPaused = false;
             //Need to press start button to initialize process table
             if(cpuState.getText().equals("System Uninitialized")){
                 Object[] row;
-                //Initialize table
+                //Initialize table + unpause processes
                 for(int i = 0; i < processList.size(); i++){
                     row = new Object[2];
                     row[0] = processList.get(i).getProcessID();
                     row[1] = processList.get(i).getServiceTime();
                     model.addRow(row);
                 }
+                execThread.start();
             }
             cpuState.setText("System Running");
-            //enable CPU
         });
 
         JButton pauseButton = new JButton("Pause System");
         pauseButton.addActionListener(e -> {
             cpuState.setText("System Paused");
-            //disable CPU
+            isPaused = true;
+            /*try{
+                execThread.join();
+            } catch(Exception a){
+                //I don't know
+            }*/
         });
 
         JPanel topSection = new JPanel(new FlowLayout());
@@ -109,6 +118,21 @@ public class Main {
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(false);
+
+        /*//Thread for execution of processes, will execute in FIFO order
+        for (int i = 0; i < processList.size(); i++) {
+            Thread t = new Thread(processList.get(i));
+            t.start();
+
+            //Process is started
+            System.out.printf("Started the thread for %s", processList.get(i).getProcessID());
+            try{
+                t.join();
+                processList.remove(i);
+            } catch(Exception e){
+                //I don't know
+            }
+        }*/
 
         //Display start menu. When that is exited, the main GUI will be set to visible
         startMenu(mainFrame);
