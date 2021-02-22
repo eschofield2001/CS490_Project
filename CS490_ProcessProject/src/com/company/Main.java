@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Main controller of the project. Displays the GUI and controls the flow of execution of the processes
@@ -17,8 +16,9 @@ public class Main {
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 1000;
     public static ArrayList<Process> processList = new ArrayList<>();
-    public static String currentProcess = "";
-    public static Integer serviceTime = 0;
+    public static DefaultTableModel model = new DefaultTableModel();
+    public static int timeUnit = 1000;
+
     public static boolean isPaused = true;
 
     public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class Main {
         //Create table that displays the current loaded processes
         JPanel tableDisplay = new JPanel(new BorderLayout());
         Object columns[] = {"Process Name", "Service Time"};
-        DefaultTableModel model = new DefaultTableModel();
+        model = new DefaultTableModel();
         model.setColumnIdentifiers(columns);
         JTable processTable = new JTable(model);
         JScrollPane jsp = new JScrollPane(processTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -56,7 +56,7 @@ public class Main {
 
         JButton enterButton = new JButton("Enter");
         enterButton.addActionListener(e -> {
-            //Take info from timeText and use to update whatever needs to be updated
+            timeUnit = Integer.parseInt(timeText.getText());
         });
 
         timeDisplay.add(timeFirstHalf);
@@ -97,11 +97,6 @@ public class Main {
         pauseButton.addActionListener(e -> {
             cpuState.setText("System Paused");
             isPaused = true;
-            /*try{
-                execThread.join();
-            } catch(Exception a){
-                //I don't know
-            }*/
         });
 
         JPanel topSection = new JPanel(new FlowLayout());
@@ -118,21 +113,6 @@ public class Main {
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(false);
-
-        /*//Thread for execution of processes, will execute in FIFO order
-        for (int i = 0; i < processList.size(); i++) {
-            Thread t = new Thread(processList.get(i));
-            t.start();
-
-            //Process is started
-            System.out.printf("Started the thread for %s", processList.get(i).getProcessID());
-            try{
-                t.join();
-                processList.remove(i);
-            } catch(Exception e){
-                //I don't know
-            }
-        }*/
 
         //Display start menu. When that is exited, the main GUI will be set to visible
         startMenu(mainFrame);
