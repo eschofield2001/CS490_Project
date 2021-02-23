@@ -15,10 +15,15 @@ public class Main {
 
     private static final int FRAME_WIDTH = 1000;
     private static final int FRAME_HEIGHT = 1000;
-    public static ArrayList<Process> processList = new ArrayList<>();
-    public static DefaultTableModel model = new DefaultTableModel();
-    public static int timeUnit = 1000;
 
+    //Global variables to be used for thread execution by Executor class:
+    //ArrayList of processes that need to be executed
+    public static ArrayList<Process> processList = new ArrayList<>();
+    //Displays the processes in the table
+    public static DefaultTableModel model = new DefaultTableModel();
+    //Used by Executor to determine how many milliseconds to sleep for
+    public static int timeUnit = 1000;
+    //Used by Executor to determine if the system is paused
     public static boolean isPaused = true;
 
     public static void main(String[] args) {
@@ -32,7 +37,7 @@ public class Main {
         mainFrame.setSize(d);
         mainFrame.setLayout(new BorderLayout());
 
-        //Create table that displays the current loaded processes
+        //Create table that displays the current loaded processes - initialized when Start button is pressed for the first time
         JPanel tableDisplay = new JPanel(new BorderLayout());
         Object columns[] = {"Process Name", "Service Time"};
         model = new DefaultTableModel();
@@ -54,6 +59,7 @@ public class Main {
         JTextField timeText = new JTextField(FIELD_WIDTH);
         timeText.setText("Time");
 
+        //Updates timeUnit when enterButton is pressed
         JButton enterButton = new JButton("Enter");
         enterButton.addActionListener(e -> {
             timeUnit = Integer.parseInt(timeText.getText());
@@ -81,13 +87,14 @@ public class Main {
             //Need to press start button to initialize process table
             if(cpuState.getText().equals("System Uninitialized")){
                 Object[] row;
-                //Initialize table + unpause processes
+                //Initialize table
                 for(int i = 0; i < processList.size(); i++){
                     row = new Object[2];
                     row[0] = processList.get(i).getProcessID();
                     row[1] = processList.get(i).getServiceTime();
                     model.addRow(row);
                 }
+                //Start execThread, which will work through processList and execute the processes
                 execThread.start();
             }
             cpuState.setText("System Running");

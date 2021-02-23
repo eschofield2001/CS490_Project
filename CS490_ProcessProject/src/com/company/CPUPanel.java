@@ -4,13 +4,18 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
+/**
+ * JPanel that displays data such as CPU name, the process it is executing, as well as the time remaining until completion
+ */
 public class CPUPanel extends JPanel {
     JLabel cpuNameLabel;
     JLabel pExec;
     JLabel timeRem;
 
 
-    //Creates the panel and initializes the time and process name to blank values
+    /**
+     * Creates the panel and initializes the time and process name to blank values
+     */
     public CPUPanel(String cpuName){
         setLayout(new GridLayout(3,1));
         Border lineBorder = BorderFactory.createLineBorder(Color.black);
@@ -34,10 +39,18 @@ public class CPUPanel extends JPanel {
         add(timeRemPanel);
     }
 
+    /**
+     * Sets pExec (process executing) name to process
+     * @param process A string representing the process name
+     */
     public void setProcess(String process){
         pExec.setText(process);
     }
 
+    /**
+     * Sets timeRem (time remaining) to a new value representing the time left for execution
+     * @param time An int representin the time remaining until a process finishes executing
+     */
     public void setTimeRem(int time){
         timeRem.setText(String.valueOf(time));
     }

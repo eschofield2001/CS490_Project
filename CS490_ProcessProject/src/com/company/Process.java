@@ -3,12 +3,11 @@ package com.company;
 /**
  * A simulated process
  */
-public class Process implements Runnable{
+public class Process{
     private int arrivalT;
     private int serviceT;
     private int priority;
     private String processID;
-    private boolean isPaused;
 
     /**
      * Constructs a process and initializes the values
@@ -22,7 +21,6 @@ public class Process implements Runnable{
         serviceT = sTime;
         priority = p;
         processID = pID;
-        isPaused = true;
     }
 
     /**
@@ -33,7 +31,6 @@ public class Process implements Runnable{
         serviceT = 0;
         priority = 0;
         processID = null;
-        isPaused = true;
     }
 
     /**
@@ -68,10 +65,6 @@ public class Process implements Runnable{
         processID = pID;
     }
 
-    public void setPaused(boolean p){
-        isPaused = p;
-    }
-
     /**
      * Prints the elements of the process
      */
@@ -79,29 +72,20 @@ public class Process implements Runnable{
         System.out.printf("Arrival Time: %d \nProcessID: %s \nService Time: %d \nPriority: %d \n\n", arrivalT, processID, serviceT, priority);
     }
 
+    /**
+     * Returns the processID string
+     * @return processID: A string with the name of the process
+     */
     public String getProcessID(){
         return processID;
     }
 
-    public boolean getPaused(){
-        return isPaused;
-    }
-
+    /**
+     * Returns the serviceTime int
+     * @return serviceT: An int with the time it takes to execute the process
+     */
     public int getServiceTime(){
         return serviceT;
     }
 
-    public void run(){
-        System.out.printf("%s needs %d seconds to run\n", processID, serviceT);
-        if (isPaused == false) {
-            try{
-                for(serviceT=serviceT; serviceT >= 0; serviceT--){
-                    Thread.sleep((long)1000);
-                }
-            }catch (InterruptedException ex){
-                //idk yet
-            }
-        }
-
-    }
 }
