@@ -1,21 +1,20 @@
 package com.company;
 
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Class that mimics CPU execution of a list of processes in FIFO order.
  */
 public class Executor implements Runnable{
-    CPUPanel cpu;
-    Lock threadLock;
+    private CPUPanel cpu;
+    private Lock threadLock;
 
     /**
      * Creates the executor and initializes the threadLock as well as sets the CPUPanel to be updated during process execution
      */
-    public Executor(CPUPanel cpu){
+    public Executor(CPUPanel cpu, Lock threadLock){
         this.cpu = cpu;
-        threadLock = new ReentrantLock();
+        this.threadLock = threadLock;
     }
 
     /**
@@ -23,17 +22,17 @@ public class Executor implements Runnable{
      */
     public void run(){
         int time;
-        while (!Main.isPaused) {
+        while (!Main.getIsPaused()) {
             try{
-                while(!Main.processList.isEmpty()){
+                while(!Main.getProcessList().isEmpty()){
                     //Lock processList while getting necessary information on next process to execute
                     threadLock.lock();
                     try{
-                        cpu.setProcess(Main.processList.get(0).getProcessID());
-                        cpu.setTimeRem(Main.processList.get(0).getServiceTime());
-                        time = Main.processList.get(0).getServiceTime();
-                        Main.model.removeRow(0);
-                        Main.processList.remove(0);
+                        cpu.setProcess(Main.getProcessList().get(0).getProcessID());
+                        cpu.setTimeRem(Main.getProcessList().get(0).getServiceTime());
+                        time = Main.getProcessList().get(0).getServiceTime();
+                        Main.getModel().removeRow(0);
+                        Main.getProcessList().remove(0);
                         //Move index 0 to finished list somewhere in here
                     }finally{
                         threadLock.unlock();
@@ -41,14 +40,14 @@ public class Executor implements Runnable{
 
                     //Execute the process one second at a time, checking each second if the system is paused and pausing execution if it is
                     for (int j = time; j >=0; j--){
-                        if(Main.isPaused){
+                        if(Main.getIsPaused()){
                             //Do nothing if paused
-                            Thread.sleep(Main.timeUnit);
+                            Thread.sleep(Main.getTimeUnit());
                             j++;
                         }
                         else{
                             //Sleep for a second and update timer
-                            Thread.sleep(Main.timeUnit);
+                            Thread.sleep(Main.getTimeUnit());
                             cpu.setTimeRem(j);
                         }
 

@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Main controller of the project. Displays the GUI and controls the flow of execution of the processes
@@ -18,14 +20,52 @@ public class Main {
 
     //Global variables to be used for thread execution by Executor class:
     //ArrayList of processes that need to be executed
-    public static ArrayList<Process> processList = new ArrayList<>();
+    private static ArrayList<Process> processList = new ArrayList<>();
     //Displays the processes in the table
-    public static DefaultTableModel model = new DefaultTableModel();
+    private static DefaultTableModel model = new DefaultTableModel();
     //Used by Executor to determine how many milliseconds to sleep for
-    public static int timeUnit = 1000;
+    private static int timeUnit = 1000;
     //Used by Executor to determine if the system is paused
-    public static boolean isPaused = true;
+    private static boolean isPaused = true;
 
+    //Functions to get the above private values. Will be used by Executor class
+    //For phase 3, could add integer field to indicate which processList should be returned
+    /**
+     * Function to return the processList ArrayList of processes
+     * @return ArrayList<Process> processList
+     */
+    public static ArrayList<Process> getProcessList() {
+        return processList;
+    }
+
+    /**
+     * Function to return the timeUnit
+     * @return int timeUnit
+     */
+    public static int getTimeUnit() {
+        return timeUnit;
+    }
+
+    /**
+     * Function to return the model representing the table with the processes
+     * @return DefaultTableModel model
+     */
+    public static DefaultTableModel getModel() {
+        return model;
+    }
+
+    /**
+     * Function to return isPaused to indicate if the system is paused
+     * @return boolean isPaused
+     */
+    public static boolean getIsPaused(){
+        return isPaused;
+    }
+
+    /**
+     * Main function of the project
+     * @param args
+     */
     public static void main(String[] args) {
 
         /*
@@ -72,11 +112,23 @@ public class Main {
         cpuDisplay.add(timeDisplay, BorderLayout.NORTH);
 
         //Create CPU Display - Second half is creating the actual representation of the CPU
+        JPanel CPUcontainer = new JPanel(new GridLayout(3, 1));
         CPUPanel cpu1 = new CPUPanel("CPU 1");
-        cpuDisplay.add(cpu1, BorderLayout.CENTER);
+        CPUPanel cpu2 = new CPUPanel("CPU 2");
+        CPUPanel cpu3 = new CPUPanel("CPU 3");
+        CPUcontainer.add(cpu1);
+        CPUcontainer.add(cpu2);
+        CPUcontainer.add(cpu3);
+        cpuDisplay.add(CPUcontainer, BorderLayout.CENTER);
 
-        Executor CPU1 = new Executor(cpu1);
-        Thread execThread = new Thread(CPU1);
+        //Start execution on each CPU
+        Lock threadLock = new ReentrantLock();
+        Executor CPU1 = new Executor(cpu1, threadLock);
+        Executor CPU2 = new Executor(cpu2, threadLock);
+        Executor CPU3 = new Executor(cpu3, threadLock);
+        Thread execThread1 = new Thread(CPU1);
+        Thread execThread2 = new Thread(CPU2);
+        Thread execThread3 = new Thread(CPU3);
 
         //Create top section of GUI that allows user to start or pause the CPU
         JLabel cpuState = new JLabel("System Uninitialized");
@@ -94,8 +146,10 @@ public class Main {
                     row[1] = processList.get(i).getServiceTime();
                     model.addRow(row);
                 }
-                //Start execThread, which will work through processList and execute the processes
-                execThread.start();
+                //Start execThreads, which will work through processList and execute the processes on 3 CPUs
+                execThread1.start();
+                execThread2.start();
+                execThread3.start();
             }
             cpuState.setText("System Running");
         });
