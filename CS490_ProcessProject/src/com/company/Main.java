@@ -67,7 +67,6 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-
         /*
         Create main GUI of the project -------------------------------------------------------------------------------------
          */
@@ -165,10 +164,21 @@ public class Main {
         topSection.add(pauseButton);
         topSection.add(cpuState);
 
+        //Creating south section for the turnaround time table
+        //Create table that displays the arrival, finish, and turnaround times
+        JPanel timetableDisplay = new JPanel(new BorderLayout());
+        Object timeColumns[] = {"Process Name", "Arrival Time", "Service Time", "Finish Time", "TAT", "nTAT"};
+        DefaultTableModel model2 = new DefaultTableModel();
+        model2.setColumnIdentifiers(timeColumns);
+        JTable timeTable = new JTable(model2);
+        JScrollPane jsp2 = new JScrollPane(timeTable, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        timetableDisplay.add(jsp2, BorderLayout.CENTER);
+
         //Add sections to GUI and initialize
         mainFrame.add(topSection, BorderLayout.NORTH);
         mainFrame.add(tableDisplay, BorderLayout.WEST);
         mainFrame.add(cpuDisplay, BorderLayout.EAST);
+        mainFrame.add(timetableDisplay, BorderLayout.SOUTH);
 
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.pack();
